@@ -1,0 +1,53 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: adcp-sales-agent
+  datasource:
+    # Own schema in the shared database; Flyway creates it.
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/adtech?currentSchema=sales_agent}
+    username: ${DB_USER:adtech}
+    password: ${DB_PASSWORD:adtech}
+  flyway:
+    schemas: sales_agent
+    default-schema: sales_agent
+  ai:
+    tools:
+      # Rethrow tool exceptions so the MCP result is flagged isError=true
+      # (AdcpSalesTools puts the AdCP errors JSON in the exception message).
+      throw-exception-on-error: true
+    mcp:
+      server:
+        name: adcp-sales-agent
+        version: 0.3.0
+        type: SYNC
+        # Streamable HTTP transport -> /mcp
+        protocol: STREAMABLE
+        instructions: >
+          AdCP sales agent for a demo Bangladeshi publisher network.
+          Call get_adcp_capabilities first, then get_products with a brief,
+          then create_media_buy with an idempotency_key, then sync_creatives to make it serve.
+
+adcp:
+  spec-version: "3.1"
+  # How often pending/active buys are moved along by time (milliseconds).
+  status-refresh-interval-ms: 30000
+  # Buyer accounts. A blank token disables that account; no non-blank tokens = auth off (local dev only).
+  accounts:
+    - account-id: demo-buyer
+      token: ${ADCP_DEMO_TOKEN:}
+    - account-id: second-buyer
+      token: ${ADCP_SECOND_TOKEN:}
+  trafficking:
+    # Base URL of the trafficking API (ad server). Internal network only: no auth between services yet.
+    base-url: ${TRAFFICKING_URL:http://localhost:8083}
+    timeout-ms: 3000
+    # How often media buys with unsynced changes are retried against the ad server (milliseconds).
+    reconcile-interval-ms: 15000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

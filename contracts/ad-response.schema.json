@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mrasheed-cse/adcp-platform/contracts/ad-response.schema.json",
+  "title": "Ad response",
+  "description": "Body of a 200 from GET /v1/ad on the decision service. A 204 means no ad. The ad tag renders the creative, fires impression_url once the ad is shown, and links the creative to click_url.",
+  "type": "object",
+  "required": ["request_id", "line_item_id", "creative", "impression_url", "click_url"],
+  "properties": {
+    "request_id": { "type": "string" },
+    "line_item_id": { "type": "string" },
+    "creative": {
+      "type": "object",
+      "required": ["id", "type", "width", "height"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["image", "html"] },
+        "width": { "type": "integer" },
+        "height": { "type": "integer" },
+        "image_url": { "type": "string", "format": "uri" },
+        "html": { "type": "string" }
+      }
+    },
+    "impression_url": { "type": "string", "format": "uri" },
+    "click_url": { "type": "string", "format": "uri" }
+  }
+}

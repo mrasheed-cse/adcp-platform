@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mrasheed-cse/adcp-platform/contracts/line-item-snapshot.schema.json",
+  "title": "Line item snapshot",
+  "description": "Published by the trafficking API (Java) to Redis key 'adserver:snapshot', with its version in 'adserver:snapshot:version'. Read by the decision engine (Go). Write the snapshot first, then the version.",
+  "type": "object",
+  "required": ["version", "generated_at", "line_items"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1, "description": "Strictly increasing; readers reload only when it changes." },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "line_items": { "type": "array", "items": { "$ref": "#/$defs/lineItem" } }
+  },
+  "$defs": {
+    "lineItem": {
+      "type": "object",
+      "required": ["id", "order_id", "advertiser_id", "name", "priority", "cpm", "start", "end", "placements", "targeting", "goal", "creatives"],
+      "properties": {
+        "id": { "type": "string" },
+        "order_id": { "type": "string" },
+        "advertiser_id": { "type": "string" },
+        "name": { "type": "string" },
+        "priority": { "type": "integer", "enum": [4, 8, 12, 16], "description": "4 sponsorship, 8 standard, 12 price priority, 16 house. Lower wins." },
+        "cpm": { "type": "number", "minimum": 0, "description": "USD per 1000 impressions" },
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time", "description": "Exclusive" },
+        "placements": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "targeting": {
+          "type": "object",
+          "properties": {
+            "countries": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z]{2}$" }, "description": "Empty or absent = all" },
+            "devices": { "type": "array", "items": { "enum": ["desktop", "mobile", "tablet"] }, "description": "Empty or absent = all" }
+          }
+        },
+        "goal": {
+          "type": "object",
+          "required": ["impressions"],
+          "properties": { "impressions": { "type": "integer", "minimum": 0, "description": "0 = no goal" } }
+        },
+        "frequency_cap": {
+          "type": "object",
+          "required": ["max", "window_seconds"],
+          "properties": {
+            "max": { "type": "integer", "minimum": 1 },
+            "window_seconds": { "type": "integer", "minimum": 1, "description": "Fixed window starting at the user's first impression" }
+          }
+        },
+        "creatives": { "type": "array", "items": { "$ref": "#/$defs/creative" }, "minItems": 1 }
+      }
+    },
+    "creative": {
+      "type": "object",
+      "required": ["id", "type", "width", "height", "landing_url"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["image", "html"] },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "image_url": { "type": "string", "format": "uri" },
+        "html": { "type": "string" },
+        "landing_url": { "type": "string", "format": "uri", "pattern": "^https?://" }
+      }
+    }
+  }
+}

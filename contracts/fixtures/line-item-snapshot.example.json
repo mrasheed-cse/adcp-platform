@@ -1,0 +1,59 @@
+{
+  "version" : 42,
+  "generated_at" : "2026-11-02T12:00:00Z",
+  "line_items" : [ {
+    "id" : "li_0a1b2c3d4e5f",
+    "order_id" : "ord_111111111111",
+    "advertiser_id" : "adv_222222222222",
+    "name" : "Cricket season sponsorship",
+    "priority" : 4,
+    "cpm" : 4.25,
+    "start" : "2026-11-01T00:00:00Z",
+    "end" : "2026-11-15T00:00:00Z",
+    "placements" : [ "sports_top" ],
+    "targeting" : {
+      "countries" : [ "BD" ],
+      "devices" : [ "mobile", "tablet" ]
+    },
+    "goal" : {
+      "impressions" : 100000
+    },
+    "frequency_cap" : {
+      "max" : 5,
+      "window_seconds" : 86400
+    },
+    "creatives" : [ {
+      "id" : "cr_333333333333",
+      "type" : "image",
+      "width" : 300,
+      "height" : 250,
+      "image_url" : "https://cdn.example.com/cricket-300x250.png",
+      "landing_url" : "https://brand.example.com/cricket"
+    } ]
+  }, {
+    "id" : "li_house00000000",
+    "order_id" : "ord_444444444444",
+    "advertiser_id" : "adv_555555555555",
+    "name" : "House: subscribe",
+    "priority" : 16,
+    "cpm" : 0,
+    "start" : "2026-01-01T00:00:00Z",
+    "end" : "2027-01-01T00:00:00Z",
+    "placements" : [ "sports_top", "news_sidebar" ],
+    "targeting" : {
+      "countries" : [ ],
+      "devices" : [ ]
+    },
+    "goal" : {
+      "impressions" : 0
+    },
+    "creatives" : [ {
+      "id" : "cr_666666666666",
+      "type" : "html",
+      "width" : 300,
+      "height" : 250,
+      "html" : "<div>Subscribe</div>",
+      "landing_url" : "https://publisher.example.com/subscribe"
+    } ]
+  } ]
+}

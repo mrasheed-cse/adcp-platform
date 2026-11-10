@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mrasheed-cse/adcp-platform/contracts/ad-event.schema.json",
+  "title": "Ad event",
+  "description": "One impression or click, written by the event collector to Kafka topic 'ad-events' (key = request_id) and loaded into ClickHouse table adtech.ad_events.",
+  "type": "object",
+  "required": ["event_id", "event_type", "ts_ms", "request_id", "line_item_id", "creative_id", "placement_id", "publisher_id", "user_key", "country", "device", "cpm"],
+  "properties": {
+    "event_id": { "type": "string", "description": "'<event_type>:<request_id>'; deterministic so duplicates collapse downstream" },
+    "event_type": { "enum": ["impression", "click"] },
+    "ts_ms": { "type": "integer", "description": "Unix milliseconds" },
+    "request_id": { "type": "string" },
+    "line_item_id": { "type": "string" },
+    "creative_id": { "type": "string" },
+    "placement_id": { "type": "string" },
+    "publisher_id": { "type": "string" },
+    "user_key": { "type": "string", "description": "Pseudonymous HMAC of the user id; empty when unknown. Never the raw id." },
+    "country": { "type": "string" },
+    "device": { "type": "string" },
+    "cpm": { "type": "number" }
+  }
+}

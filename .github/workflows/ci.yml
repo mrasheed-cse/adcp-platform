@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: go.mod and go.sum are tidy
+        run: go mod tidy -diff
+      - name: Verify module checksums against the Go checksum database
+        run: go mod verify
+      - name: Vet
+        run: make vet
+      - name: Unit tests
+        run: make test
+      - name: End-to-end test
+        run: make test-e2e
+
+  java:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [trafficking-api, adcp-sales-agent]
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Build and test
+        run: mvn -B verify
+
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate docker-compose file
+        run: TOKEN_SECRET=ci-only-secret-0123456789abcdef0123 docker compose -f infra/docker-compose.yml config --quiet

@@ -1,0 +1,22 @@
+bin/
+.env
+*.log
+go.work
+go.work.sum
+
+# Java
+target/
+build/
+.gradle/
+*.class
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
